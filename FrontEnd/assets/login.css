@@ -124,17 +124,21 @@ margin: auto;
     justify-content: center;
     justify-self: center;
     width: 179px;
-    margin: 37px 0 28px 0;
+    margin: 37px auto 28px auto;
 	color: #1D6154;
     background: #1D6154;
 	background: none;
 	border-radius: 25px;
 	border: 2px solid #1D6154;
 	padding: 9px;
+	cursor: pointer;
 }
 footer nav ul {
 	display: flex;
 	justify-content: center;
 	margin: 2em
+}
+footer nav ul li {
+	text-decoration: underline;
 }
 

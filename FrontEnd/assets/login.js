@@ -5,31 +5,61 @@ const footer = document.querySelector("footer")
 const connectBtn = document.createElement("btn")
 connectBtn.textContent = "Se connecter"
 connectBtn.classList.add("connectBtn")
-loginSection.appendChild(connectBtn)
+form.appendChild(connectBtn)
 
 const email = document.getElementById("email")
 const password = document.getElementById("password")
 
 
-function formManagement () {
 
-    email.addEventListener("change", () => {
-        console.log(email) 
-    })
-    password.addEventListener("change", () => {
-        console.log(password)
-    })
+form.addEventListener("submit", async function (event)  {
+    event.preventDefault()
 
-    form.addEventListener("sumbit", (event) => {
-        event.preventDefault()
-    })
+    const user = {
+        email : emailInput.value,
+        password : passwordInput.value
+    }
+
+    //Partie qui gere les echanges avec l'API
+    try {
+        const response = await fetch("http://localhost:5678/api/users/login", {
+            method : "POST",
+            headers : {"Content-Type" : "application/json"},
+            body : JSON.stringify(user)
+        })
+        console.log(response)
+
+        if(!response.ok){
+            const errorData = await response.json()
+            console.log(errorData.message)
+        }
+        
+        const data = await response.json()
+        if(data.token){
+            localStorage.setItem("token", data.token)
+            window.location.href = "http://127.0.0.1:5500/FrontEnd/index.html"
+        }else{
+            console.log("ID incorrects.")
+        }
+
+    } catch (error) {
+        console.log("erreur", error)
+    }
+})
+
+
+
     
 
-}
 
-// function sendInfo () {
-// Lier le btn au form, quand je clique sur le btn j'envoie les infos, si elles sont true je charge la page d'acceuil, sinon message d'erreur.
-//appel à l'api, revoi du token, stockage dans le session storage
-//si le token est rentré je change l'affichage
-//changer le libiele sur filter.js soit avec display soit en changeant l'attribut
-// }
+
+
+
+
+    //Clique sur btn, envoie des infos, si true chargement page d'acceuil, sinon msg erreur. ()
+
+    //appel à l'api, revoi token, stockage dans session storage (ok)
+
+    //si token enregistré ,changement d'affichage (ok)
+
+    //changer le libiele sur filter.js soit avec display soit en changeant l'attribut ()
