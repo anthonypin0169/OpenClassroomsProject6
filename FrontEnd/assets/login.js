@@ -12,14 +12,15 @@ const password = document.getElementById("password")
 
 
 
+
 form.addEventListener("submit", async function (event)  {
     event.preventDefault()
-
+    
     const user = {
-        email : emailInput.value,
-        password : passwordInput.value
+        email : email.value,
+        password : password.value
     }
-
+    console.log(user)
     //Partie qui gere les echanges avec l'API
     try {
         const response = await fetch("http://localhost:5678/api/users/login", {
