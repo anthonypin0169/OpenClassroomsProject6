@@ -98,3 +98,70 @@ function selectFilter() {
         });
     });
 }
+
+
+
+//Variables
+const token = localStorage.getItem("token")
+const body = document.querySelector("body")
+const header = document.querySelector("header")
+const banner = document.createElement("div")
+const bannerTxt = document.createElement("p")
+
+const nav = document.querySelector("nav ul")
+const login = document.querySelector("ul li:nth-child(3)")
+const logout = document.createElement("li")
+const instaIcon = document.querySelector("nav img")
+
+const h2modify = document.querySelector("#portfolio h2")
+const modifyBtn = document.createElement("button")
+const modifyContainer = document.createElement("div")
+
+
+
+function gestionMode (){
+
+    if (token) {
+        // Ajouter la banniere
+        banner.classList.add("banner")
+        bannerTxt.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>Mode édition`
+        body.insertBefore(banner, header)
+        banner.appendChild(bannerTxt)
+        
+        // Display none - block / login - logout
+        logout.innerHTML = `logout`
+        nav.appendChild(instaIcon)
+        nav.insertBefore(logout, instaIcon)
+        login.style.display = "none"
+        logout.style.display = "block"
+        
+        // Logout deconnexion
+        logout.addEventListener("click", () => {
+            localStorage.removeItem("token")
+            sessionStorage.removeItem("token")
+            window.location.href = "http://127.0.0.1:5500/FrontEnd/index.html"
+        })    
+
+        // Display none - block / filter
+        filterContainer.style.display = "none"
+        
+        // Ajouter le btn modifier
+        modifyBtn.classList.add("modify-btn")
+        modifyBtn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>Modifier projet`
+        h2modify.style.marginBottom = "10px"
+        portfolio.insertBefore(modifyBtn, filterContainer)
+        modifyContainer.classList.add("modifyContainer")
+        modifyContainer.appendChild(h2modify)
+        modifyContainer.appendChild(modifyBtn)
+        portfolio.prepend(modifyContainer)
+        
+        console.log("Mode éditeur")
+    } else {
+        login.style.display = "block"
+        logout.style.display = "none"
+        filterContainer.style.display = "flex"
+        console.log("Mode visiteur")
+    }
+}
+
+gestionMode ()
