@@ -114,12 +114,12 @@ const logout = document.createElement("li")
 const instaIcon = document.querySelector("nav img")
 
 const h2modify = document.querySelector("#portfolio h2")
-const modifyBtn = document.createElement("button")
+const modifyBtn = document.createElement("a")
 const modifyContainer = document.createElement("div")
 
 
 
-function gestionMode (){
+function managementMode (){
 
     if (token) {
         // Ajouter la banniere
@@ -164,4 +164,13 @@ function gestionMode (){
     }
 }
 
-gestionMode ()
+managementMode ()
+
+//Boite modale
+const modalePicsContainer = document.createElement("div")
+modalePicsContainer.classList.add("modale-pics-container")
+const modalPics = document.createElement("article")
+modalPics.classList.add("modal-pics")
+const bin = document.createElement("p")
+bin.classList.add("bin")
+bin.innerHTML = `<i class="fa-solid fa-trash"></i>`
