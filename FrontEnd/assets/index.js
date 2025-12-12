@@ -192,7 +192,8 @@ modalBtn.id = "btn-add-pics"
 modalBtn.innerHTML = `Ajouter une photo`
 modalWrapper.appendChild(modalBtn)
 
-// J'utilise la liste works de l'api, je fais une boucle, pour chaque dataId je range une photo dans un article modalPics
+
+
 function displayWorksPrewiew(pictures){
 
     modalePicsContainer.innerHTML = ""
@@ -201,7 +202,7 @@ function displayWorksPrewiew(pictures){
         
         const modalPics = document.createElement("article")
         modalPics.classList.add("display-modal-pics")
-        modalPics.dataset.id = element.Id
+        modalPics.dataset.id = element.id
 
         const image = document.createElement("img")
         image.src = element.imageUrl
@@ -210,6 +211,7 @@ function displayWorksPrewiew(pictures){
         const bin = document.createElement("span")
         bin.classList.add("fa-trash", "fa-solid")
 
+        modalPics.appendChild(image)
         modalPics.appendChild(bin)
         modalePicsContainer.appendChild(modalPics)
 
@@ -280,6 +282,7 @@ function createAddPhotoWiew (categories){
     imageInput.type = "file";
     imageInput.id = "input-image";
     imageInput.accept = "image/*"; 
+    imageInput.name = "image"
 
     const uploadInfo = document.createElement("p");
     uploadInfo.classList.add("upload-info");
@@ -299,12 +302,14 @@ function createAddPhotoWiew (categories){
     titleInput.type = "text"
     titleInput.id = "input-title"
     titleInput.placeholder = ""
+    titleInput.name = "title"
 
     const titleCategory = document.createElement("h2")
     titleCategory.innerHTML = "Catégories"
     titleCategory.classList.add("input-h2")
     const categorySelect = document.createElement("select")
     categorySelect.id = "input-category"
+    categorySelect.name = "category"
 
     categories.forEach(cat => {
         const option = document.createElement("option")
@@ -325,7 +330,7 @@ function createAddPhotoWiew (categories){
     quitContainer.appendChild(xMark)
     addPhotoWiew.appendChild(title)
     addPhotoWiew.appendChild(form)
-    form.appendChild(imageInput)
+    // form.appendChild(imageInput)
     form.appendChild(titleInputText)
     form.appendChild(titleInput)
     form.appendChild(titleCategory)
@@ -360,13 +365,20 @@ function createAddPhotoWiew (categories){
         try {
             const response = await fetch("http://localhost:5678/api/works",{
                 method:"POST",
+                headers:{
+                    "Authorization":`Bearer ${localStorage.getItem("token")}`
+                },
                 body: formData
             })
-            if (!response.ok){
-                const result = await response.json()
-                console.log("Réponse : ",result)
+            if (response.ok){
+
+                const updatedWorks = await loadWorks()
+                displayWorks(updatedWorks)
+                displayWorksPrewiew(updatedWorks)
+                form.reset()
             }else{
-                console.log("Erreur : ",response.statusText)
+                const error = await response.json()
+                console.log("Erreur : ", error)
             }
         }catch(error){
             console.log("Erreur : ", error)
