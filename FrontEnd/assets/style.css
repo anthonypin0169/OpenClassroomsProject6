@@ -272,6 +272,7 @@ footer nav ul {
 	margin: 6px 4.86px 0 auto;
 	border-radius: 2px;
 	color: white;
+	background: black;
 	height: 24px;
 	width: 24px;
 }
@@ -307,9 +308,6 @@ footer nav ul {
 	height: 169px;
 	background: #E8F1F6;
 }
-.input-h2{
-
-}
 #input-title{
 	width: 420px;
 	height: 51px;
@@ -338,12 +336,10 @@ align-items: center;
 gap: 12px;
 margin-bottom: 30px;
 }
-
 .upload-icon {
 font-size: 55px;
 color: #B9C5CC;
 }
-
 .upload-button {
 background: #CBD6DC;
 padding: 10px 20px;
@@ -352,11 +348,9 @@ cursor: pointer;
 font-size: 14px;
 color: #4A4A4A;
 }
-
 #input-image {
 display: none;
 }
-
 .upload-info {
 font-size: 12px;
 color: #6C757D;

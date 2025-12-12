@@ -180,9 +180,8 @@ modalPics.classList.add("display-modal-pics")
 modalePicsContainer.appendChild(modalPics)
 
 //Icone des photos
-const bin = document.createElement("p")
-bin.classList.add("fa-trash")
-bin.innerHTML = `<i class="fa-solid fa-trash"></i>`
+const bin = document.createElement("span")
+bin.classList.add("fa-trash", "fa-solid")
 modalPics.appendChild(bin)
 
 //Croix
@@ -211,6 +210,8 @@ function createAddPhotoWiew (categories){
     addPhotoWiew.classList.add("modal-wrapper")
     addPhotoWiew.id = "modal-add-photo-view"
     addPhotoWiew.style.display = "none"
+
+    addPhotoWiew.innerHTML=""
 
     const backArrow = document.createElement("span")
     backArrow.innerHTML = `<i class="fa-solid fa-arrow-left"></i>`
@@ -295,6 +296,11 @@ function createAddPhotoWiew (categories){
     addPhotoWiew.appendChild(modalBar)
     addPhotoWiew.appendChild(sumbitBtn)
 
+    addPhotoWiew.addEventListener("click", stopPropagation)
+    xMark.addEventListener("click", (e)=>{
+        e.stopPropagation()
+        closeModal(e)
+    })
     //Aller au formulaire
     modalBtn.addEventListener("click", ()=>{
         document.getElementById("modal-gallery-view").style.display = "none"
@@ -378,6 +384,36 @@ function stopPropagation (e){
 modifyBtn.addEventListener("click", (event) => {
     openModal(event)
 })
+//Supprimer les travaux
 
+//Appel de l'api pour supprimer une photo
+async function deleteWorks() { 
+    
+  bin.forEach(trashBtn => {
+    trashBtn.addEventListener("click", async (event)=>{
+        event.stopPropagation()
+
+        const photo = event.target.closest(modalPics)
+        const id = photo.dataset.id
+
+        try {
+        const response = await fetch(`http://localhost:5678/api/works/${id}`,{
+            method:"DELETE",
+            headers:{"Authorization":`Bearer ${localStorage.getItem("token")}`}
+        })
+       if(!response.ok){
+        throw new Error("Erreur lors de la suppression")
+        }
+        
+        photo.remove()
+        console.log(`Photo ${id} suprimée`)
+
+        } catch (E) {
+            console.error("Impossible de supprimer la photo :", E)
+        }
+    })
+  })
+ 
+}
 //8.2 ajout de photo, fermer modale, tout vider + appel api, utiliser la fonction de chargement
 
