@@ -75,6 +75,8 @@ async function startDisplay() {
 
 document.addEventListener("DOMContentLoaded",startDisplay)
 
+//Creer un Filtre "Tous".................................................................................................
+
 //Fonction de tri
 function selectFilter() {
 
@@ -166,23 +168,12 @@ function managementMode (){
 
 managementMode ()
 
-//Ouverture - Fermeture boite modale
 //Conteneur de photo
 const modalWrapper = document.querySelector(".modal-wrapper")
 modalWrapper.id = "modal-gallery-view"
 const modalePicsContainer = document.createElement("div")
 modalePicsContainer.classList.add("modale-pics-container")
 modalWrapper.appendChild(modalePicsContainer)
-
-//Photo
-const modalPics = document.createElement("article")
-modalPics.classList.add("display-modal-pics")
-modalePicsContainer.appendChild(modalPics)
-
-//Icone des photos
-const bin = document.createElement("span")
-bin.classList.add("fa-trash", "fa-solid")
-modalPics.appendChild(bin)
 
 //Croix
 const closeModalBtn = document.querySelector(".fa-xmark")
@@ -200,6 +191,52 @@ modalBtn.classList.add("modal-btn")
 modalBtn.id = "btn-add-pics"
 modalBtn.innerHTML = `Ajouter une photo`
 modalWrapper.appendChild(modalBtn)
+
+// J'utilise la liste works de l'api, je fais une boucle, pour chaque dataId je range une photo dans un article modalPics
+function displayWorksPrewiew(pictures){
+
+    modalePicsContainer.innerHTML = ""
+
+    pictures.forEach(element => {
+        
+        const modalPics = document.createElement("article")
+        modalPics.classList.add("display-modal-pics")
+        modalPics.dataset.id = element.Id
+
+        const image = document.createElement("img")
+        image.src = element.imageUrl
+        image.alt = element.title
+        
+        const bin = document.createElement("span")
+        bin.classList.add("fa-trash", "fa-solid")
+
+        modalPics.appendChild(bin)
+        modalePicsContainer.appendChild(modalPics)
+
+       bin.addEventListener("click", async (event)=>{
+                event.stopPropagation()
+
+                const id = modalPics.dataset.id
+
+                try {
+                    const response = await fetch(`http://localhost:5678/api/works/${id}`,{
+                    method:"DELETE",
+                    headers:{"Authorization":`Bearer ${localStorage.getItem("token")}`}
+                })
+
+                if(!response.ok){
+                    throw new Error("Erreur lors de la suppression")
+                }
+                
+                modalPics.remove()
+                console.log(`Photo ${id} suprimée`)
+
+                } catch (E) {
+                    console.error("Impossible de supprimer la photo :", E)
+                }
+            })
+        })
+}
 
 //Gestion des vues boite modale
 function createAddPhotoWiew (categories){
@@ -276,11 +313,11 @@ function createAddPhotoWiew (categories){
         categorySelect.appendChild(option)
     })
 
-    const sumbitBtn = document.createElement("button")
-    sumbitBtn.type = "sumbit"
-    sumbitBtn.id = "btn-sumbit-work"
-    sumbitBtn.classList.add("modal-btn")
-    sumbitBtn.textContent = "Valider"
+    const submitBtn = document.createElement("button")
+    submitBtn.type = "submit"
+    submitBtn.id = "btn-submit-work"
+    submitBtn.classList.add("modal-btn")
+    submitBtn.textContent = "Valider"
 
     container.appendChild(addPhotoWiew)
     addPhotoWiew.appendChild(quitContainer)
@@ -294,7 +331,7 @@ function createAddPhotoWiew (categories){
     form.appendChild(titleCategory)
     form.appendChild(categorySelect)
     addPhotoWiew.appendChild(modalBar)
-    addPhotoWiew.appendChild(sumbitBtn)
+    addPhotoWiew.appendChild(submitBtn)
 
     addPhotoWiew.addEventListener("click", stopPropagation)
     xMark.addEventListener("click", (e)=>{
@@ -313,6 +350,27 @@ function createAddPhotoWiew (categories){
         document.getElementById("modal-gallery-view").style.display = "flex"
         document.getElementById("modal-add-photo-view").style.display = "none"
         
+    })
+
+    //Ajouter des photos
+    submitBtn.addEventListener("click", async (event)=>{
+        event.preventDefault()
+        const formData = new FormData(form)
+
+        try {
+            const response = await fetch("http://localhost:5678/api/works",{
+                method:"POST",
+                body: formData
+            })
+            if (!response.ok){
+                const result = await response.json()
+                console.log("Réponse : ",result)
+            }else{
+                console.log("Erreur : ",response.statusText)
+            }
+        }catch(error){
+            console.log("Erreur : ", error)
+        }
     })
 
     return addPhotoWiew
@@ -362,6 +420,9 @@ modal.addEventListener("click", closeModal);
 if (page1) page1.addEventListener("click", stopPropagation); 
 if (page2) page2.addEventListener("click", stopPropagation); 
 if (closeBtn) closeBtn.addEventListener("click", closeModal);
+
+const pictures = await loadWorks()
+displayWorksPrewiew(pictures) 
 }
 
 function closeModal (e){
@@ -384,36 +445,3 @@ function stopPropagation (e){
 modifyBtn.addEventListener("click", (event) => {
     openModal(event)
 })
-//Supprimer les travaux
-
-//Appel de l'api pour supprimer une photo
-async function deleteWorks() { 
-    
-  bin.forEach(trashBtn => {
-    trashBtn.addEventListener("click", async (event)=>{
-        event.stopPropagation()
-
-        const photo = event.target.closest(modalPics)
-        const id = photo.dataset.id
-
-        try {
-        const response = await fetch(`http://localhost:5678/api/works/${id}`,{
-            method:"DELETE",
-            headers:{"Authorization":`Bearer ${localStorage.getItem("token")}`}
-        })
-       if(!response.ok){
-        throw new Error("Erreur lors de la suppression")
-        }
-        
-        photo.remove()
-        console.log(`Photo ${id} suprimée`)
-
-        } catch (E) {
-            console.error("Impossible de supprimer la photo :", E)
-        }
-    })
-  })
- 
-}
-//8.2 ajout de photo, fermer modale, tout vider + appel api, utiliser la fonction de chargement
-
