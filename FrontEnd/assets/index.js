@@ -23,7 +23,8 @@ async function loadWorks() {
     }
 }
 
-//Variables
+//______________________________________________ Filtres et travaux _____________________________________________________
+
 const portfolio = document.getElementById("portfolio")
 const filterContainer = document.createElement("div")
 filterContainer.classList.add("filters")
@@ -31,10 +32,29 @@ const gallery = document.querySelector(".gallery")
 portfolio.insertBefore(filterContainer,gallery)
 filterContainer.innerHTML = ""
 
-//Fonctions de créations d'éléments
-function displayCategories(filtres){
+//Filtre "Tous"
+function filterAll() {
+
+    const btn = document.createElement("button")
+    btn.id = "filter-all"
+    btn.textContent = "Tous"
+
+    filterContainer.appendChild(btn)
+
+    btn.addEventListener("click", () => {
+        const cards = document.querySelectorAll(".card")
+
+        cards.forEach(card => {
+            card.style.display = "block"
+        });
+    });
+}
+
+
+
+function displayCategories(categories){
   
-    filtres.forEach(element => {
+    categories.forEach(element => {
         const btn = document.createElement("button")
         btn.classList.add("newBtn")
         btn.dataset.id = element.id
@@ -67,7 +87,9 @@ async function startDisplay() {
 
     const categories = await loadCategories()
     const works = await loadWorks()
-    
+    const allWorks = await loadWorks()
+
+    filterAll()
     displayCategories(categories)
     displayWorks(works)
     selectFilter()
@@ -75,35 +97,32 @@ async function startDisplay() {
 
 document.addEventListener("DOMContentLoaded",startDisplay)
 
-//Creer un Filtre "Tous".................................................................................................
-
-//Fonction de tri
+//Gerer l'affichage des filtres
 function selectFilter() {
 
-    const buttons = document.querySelectorAll(".newBtn"); 
+    const buttons = document.querySelectorAll(".newBtn")
 
     buttons.forEach(button => {
         button.addEventListener("click", () => {
 
-        const filterId = parseInt(button.dataset.id); 
-        const cards = document.querySelectorAll(".card"); 
+        const filterId = parseInt(button.dataset.id)
+        const cards = document.querySelectorAll(".card")
 
             cards.forEach(card => {
-                const cardId = parseInt(card.dataset.category);
+                const cardId = parseInt(card.dataset.category)
 
                 if (filterId === cardId) {
-                card.style.display = "block";
+                card.style.display = "block"
                 } else {
-                card.style.display = "none";
+                card.style.display = "none"
                 }
             });
         });
     });
 }
 
+//________________________________________________ Login - Logout _______________________________________________________
 
-
-//Variables
 const token = localStorage.getItem("token")
 const body = document.querySelector("body")
 const header = document.querySelector("header")
@@ -125,30 +144,26 @@ const modifyContainer = document.createElement("div")
 function managementMode (){
 
     if (token) {
-        // Ajouter la banniere
+
         banner.classList.add("banner")
         bannerTxt.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>Mode édition`
         body.insertBefore(banner, header)
         banner.appendChild(bannerTxt)
         
-        // Display none - block / login - logout
         logout.innerHTML = `logout`
         nav.appendChild(instaIcon)
         nav.insertBefore(logout, instaIcon)
         login.style.display = "none"
         logout.style.display = "block"
         
-        // Logout deconnexion
         logout.addEventListener("click", () => {
             localStorage.removeItem("token")
             localStorage.removeItem("token")
             window.location.href = "http://127.0.0.1:5500/FrontEnd/index.html"
         })    
 
-        // Display none - block / filter
         filterContainer.style.display = "none"
         
-        // Ajouter le btn modifier
         modifyBtn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>Modifier projet`
         h2modify.style.marginBottom = "10px"
         portfolio.insertBefore(modifyBtn, filterContainer)
@@ -165,27 +180,24 @@ function managementMode (){
         console.log("Mode visiteur")
     }
 }
-
 managementMode ()
 
-//Conteneur de photo
+//_________________________________________________ Boite modale ________________________________________________________
+
 const modalWrapper = document.querySelector(".modal-wrapper")
 modalWrapper.id = "modal-gallery-view"
 const modalePicsContainer = document.createElement("div")
 modalePicsContainer.classList.add("modale-pics-container")
 modalWrapper.appendChild(modalePicsContainer)
 
-//Croix
 const closeModalBtn = document.querySelector(".fa-xmark")
 const xMark = document.createElement("span")
 xMark.classList.add("fa-xmark", "fa-solid")
 
-//Barre de séparation
 const modalBar = document.createElement("div")
 modalBar.classList.add("modal-bar")
 modalWrapper.appendChild(modalBar)
 
-//Bouton ajouter
 const modalBtn = document.createElement("button")
 modalBtn.classList.add("modal-btn")
 modalBtn.id = "btn-add-pics"
@@ -193,7 +205,7 @@ modalBtn.innerHTML = `Ajouter une photo`
 modalWrapper.appendChild(modalBtn)
 
 
-
+//Disposer des photos et les supprimer par l'icone poubelle
 function displayWorksPrewiew(pictures){
 
     modalePicsContainer.innerHTML = ""
@@ -240,7 +252,9 @@ function displayWorksPrewiew(pictures){
         })
 }
 
-//Gestion des vues boite modale
+
+
+//Gestion des vues de la boite modale
 function createAddPhotoWiew (categories){
     
     const container = document.getElementById("modal1")
@@ -267,33 +281,63 @@ function createAddPhotoWiew (categories){
     form.id = "form-add-work"
     form.enctype = "multipart/form-data"
 
-    const uploadArea = document.createElement("div");
-    uploadArea.classList.add("upload-area");
+    const uploadArea = document.createElement("div")
+    uploadArea.classList.add("upload-area")
 
-    const uploadIcon = document.createElement("i");
-    uploadIcon.classList.add("fa-regular", "fa-image", "upload-icon");
+    const uploadIcon = document.createElement("i")
+    uploadIcon.classList.add("fa-regular", "fa-image", "upload-icon")
 
-    const uploadButton = document.createElement("label");
-    uploadButton.classList.add("upload-button");
-    uploadButton.setAttribute("for", "input-image");
-    uploadButton.innerText = "+ Ajouter photo";
+    const uploadButton = document.createElement("label")
+    uploadButton.classList.add("upload-button")
+    uploadButton.setAttribute("for", "input-image")
+    uploadButton.innerText = "+ Ajouter photo"
 
-    const imageInput = document.createElement("input");
-    imageInput.type = "file";
-    imageInput.id = "input-image";
-    imageInput.accept = "image/*"; 
+    const imageInput = document.createElement("input")
+    imageInput.type = "file"
+    imageInput.id = "input-image"
+    imageInput.accept = "image/*"
     imageInput.name = "image"
 
-    const uploadInfo = document.createElement("p");
-    uploadInfo.classList.add("upload-info");
-    uploadInfo.innerText = "jpg, png · 4mo max";
+    const uploadInfo = document.createElement("p")
+    uploadInfo.classList.add("upload-info")
+    uploadInfo.innerText = "jpg, png · 4mo max"
 
-    uploadArea.appendChild(uploadIcon);
-    uploadArea.appendChild(uploadButton);
-    uploadArea.appendChild(imageInput);
-    uploadArea.appendChild(uploadInfo);
+    uploadArea.appendChild(uploadIcon)
+    uploadArea.appendChild(uploadButton)
+    uploadArea.appendChild(imageInput)
+    uploadArea.appendChild(uploadInfo)
 
-    form.appendChild(uploadArea);
+    form.appendChild(uploadArea)
+
+    //Affichage d'une preview dans l'upload area
+    const imagePreview = document.createElement("img")
+    imagePreview.classList.add("image-preview")
+    imagePreview.style.display = "none"
+
+    uploadArea.appendChild(imagePreview)
+    imageInput.addEventListener("change", () => {
+    const file = imageInput.files[0]
+
+    if (file && file.type.startsWith("image/")) {
+
+    imagePreview.src = URL.createObjectURL(file)
+    imagePreview.style.display = "block"
+
+    uploadIcon.style.display = "none"
+    uploadButton.style.display = "none"
+    uploadInfo.style.display = "none"
+
+    } else {
+    
+    imagePreview.src = ""
+    imagePreview.style.display = "none"
+
+    uploadIcon.style.display = "block"
+    uploadButton.style.display = "block"
+    uploadInfo.style.display = "block"
+    }
+    })
+
 
     const titleInputText = document.createElement("h2")
     titleInputText.innerHTML = "Titre"
@@ -324,18 +368,21 @@ function createAddPhotoWiew (categories){
     submitBtn.classList.add("modal-btn")
     submitBtn.textContent = "Valider"
 
+    const modalBarAdd = document.createElement("div")
+    modalBarAdd.classList.add("modal-bar")
+    
+
     container.appendChild(addPhotoWiew)
     addPhotoWiew.appendChild(quitContainer)
     quitContainer.appendChild(backArrow)
     quitContainer.appendChild(xMark)
     addPhotoWiew.appendChild(title)
     addPhotoWiew.appendChild(form)
-    // form.appendChild(imageInput)
     form.appendChild(titleInputText)
     form.appendChild(titleInput)
     form.appendChild(titleCategory)
     form.appendChild(categorySelect)
-    addPhotoWiew.appendChild(modalBar)
+    addPhotoWiew.appendChild(modalBarAdd)
     addPhotoWiew.appendChild(submitBtn)
 
     addPhotoWiew.addEventListener("click", stopPropagation)
@@ -343,13 +390,14 @@ function createAddPhotoWiew (categories){
         e.stopPropagation()
         closeModal(e)
     })
+
     //Aller au formulaire
     modalBtn.addEventListener("click", ()=>{
         document.getElementById("modal-gallery-view").style.display = "none"
         document.getElementById("modal-add-photo-view").style.display = "flex"
         
     })
-
+    
     //Retour vue 1
     backArrow.addEventListener("click", ()=>{
         document.getElementById("modal-gallery-view").style.display = "flex"
@@ -357,7 +405,7 @@ function createAddPhotoWiew (categories){
         
     })
 
-    //Ajouter des photos
+    //Ajouter des nouvelles photos
     submitBtn.addEventListener("click", async (event)=>{
         event.preventDefault()
         const formData = new FormData(form)
@@ -376,6 +424,7 @@ function createAddPhotoWiew (categories){
                 displayWorks(updatedWorks)
                 displayWorksPrewiew(updatedWorks)
                 form.reset()
+
             }else{
                 const error = await response.json()
                 console.log("Erreur : ", error)
@@ -389,49 +438,49 @@ function createAddPhotoWiew (categories){
 }
 
 
-
+//Ouverture et fermeture de la boite modale
 let modal = null
 
 async function openModal(event) {
-event.preventDefault();
+event.preventDefault()
 
-let categories = [];
+let categories = []
 try {
 categories = await loadCategories();
 } catch (err) {
-console.error("Impossible de charger les catégories :", err);
+console.error("Impossible de charger les catégories :", err)
 }
 
-createAddPhotoWiew(categories);
+createAddPhotoWiew(categories)
 
-const target = document.getElementById("modal1");
-const page1 = modalWrapper || document.getElementById("modal-gallery-view"); 
-const page2 = document.getElementById("modal-add-photo-view");
-const closeBtn = closeModalBtn || document.querySelector(".fa-xmark");
+const target = document.getElementById("modal1")
+const page1 = modalWrapper || document.getElementById("modal-gallery-view")
+const page2 = document.getElementById("modal-add-photo-view")
+const closeBtn = closeModalBtn || document.querySelector(".fa-xmark")
 
 if (!target) {
-console.error("openModal : #modal1 introuvable");
-return;
+console.error("openModal : #modal1 introuvable")
+return
 }
 
-if (page1) page1.style.display = "flex"; 
-if (page2) page2.style.display = "none";
+if (page1) page1.style.display = "flex"
+if (page2) page2.style.display = "none"
 
-target.style.display = "flex";
-target.removeAttribute("aria-hidden");
-target.setAttribute("aria-modal", "true");
+target.style.display = "flex"
+target.removeAttribute("aria-hidden")
+target.setAttribute("aria-modal", "true")
 
 modal = target;
 
-modal.removeEventListener("click", closeModal);
-if (page1) page1.removeEventListener("click", stopPropagation);
-if (page2) page2.removeEventListener("click", stopPropagation);
-if (closeBtn) closeBtn.removeEventListener("click", closeModal);
+modal.removeEventListener("click", closeModal)
+if (page1) page1.removeEventListener("click", stopPropagation)
+if (page2) page2.removeEventListener("click", stopPropagation)
+if (closeBtn) closeBtn.removeEventListener("click", closeModal)
 
-modal.addEventListener("click", closeModal); 
-if (page1) page1.addEventListener("click", stopPropagation); 
-if (page2) page2.addEventListener("click", stopPropagation); 
-if (closeBtn) closeBtn.addEventListener("click", closeModal);
+modal.addEventListener("click", closeModal)
+if (page1) page1.addEventListener("click", stopPropagation)
+if (page2) page2.addEventListener("click", stopPropagation)
+if (closeBtn) closeBtn.addEventListener("click", closeModal)
 
 const pictures = await loadWorks()
 displayWorksPrewiew(pictures) 
