@@ -68,9 +68,10 @@ function displayWorks(works){
     gallery.innerHTML = ""
 
     works.forEach(element => {
-        const card = document.createElement("figcaption")
+        const card = document.createElement("figure")
         card.classList.add("card")
         card.dataset.category = element.categoryId
+        card.dataset.id = element.id
         const image = document.createElement("img")
         image.src = element.imageUrl
         image.alt = element.title
@@ -205,6 +206,7 @@ modalBtn.innerHTML = `Ajouter une photo`
 modalWrapper.appendChild(modalBtn)
 
 
+
 //Disposer des photos et les supprimer par l'icone poubelle
 function displayWorksPrewiew(pictures){
 
@@ -243,6 +245,11 @@ function displayWorksPrewiew(pictures){
                 }
                 
                 modalPics.remove()
+                const galleryCard = document.querySelector(`figure[data-id="${id}"]`)
+
+                if (galleryCard){
+                    galleryCard.remove()
+                }
                 console.log(`Photo ${id} suprimée`)
 
                 } catch (E) {

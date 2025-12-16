@@ -206,9 +206,12 @@ footer nav ul {
 /* Mode editeur*/
 .banner{
 	background: black;
-	width: 100%;
+	width: 100vw;
 	height: 59px;
 	display: flex;
+	position: relative;
+	left: 50%;
+	transform: translate(-50%);
 }
 .banner p {
 	display: flex;

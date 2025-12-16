@@ -10,6 +10,21 @@ form.appendChild(connectBtn)
 const email = document.getElementById("email")
 const password = document.getElementById("password")
 
+const errorMessage = document.createElement("p")
+errorMessage.classList.add("error-message")
+form.appendChild(errorMessage)
+
+function blocBtn () {
+    if(email.value.trim() !== "" && password.value.trim() !== ""){
+        connectBtn.disabled = false
+    } else {
+        connectBtn.disabled = true
+    }
+}
+
+email.addEventListener("input", blocBtn)
+password.addEventListener("input", blocBtn)
+
 //Event de test
 email.addEventListener("input", () => {
     console.log("Champ de saisie du mail :", email.value)
@@ -37,18 +52,17 @@ form.addEventListener("submit", async function (event)  {
         
         const data = await response.json()
         if(!response.ok){
-            console.log(data.message)
+            throw new Error ("Identifiant ou mot de passe incorrect")
         }
 
         if(data.token){
             localStorage.setItem("token", data.token)
             window.location.href = "http://127.0.0.1:5500/FrontEnd/index.html"
-        }else{
-            console.log("ID incorrects.")
-            alert("Email ou mot de passe incorrect")
         }
 
     } catch (error) {
+        errorMessage.textContent = error.message
+        errorMessage.classList.add("visible")
         console.log("erreur", error)
     }
 })
